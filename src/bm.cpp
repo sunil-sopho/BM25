@@ -14,6 +14,11 @@ string bm25::cleaner(string& txt){
  //    [](char c) { return !(std::isspace(c) || std::isalpha(c) || c=='<' || c=='>' || c=='/'); } ,
  //    ' ');
 
+	// txt.erase(std::remove_if(txt.begin(), txt.end(),
+ //    [](char c) { return (isdigit(c) || ispunct(c)); } ),
+ //    txt.end());
+
+	// ::isdigit(ch) || ::ispunct(ch)
 	// std::replace_if(txt.begin(), txt.end(),
  //    [](char c) { return (c==','||c=='-'||c=='.' || c=='(' || c==')'); } ,
  //    ' ');
@@ -196,14 +201,18 @@ void bm25::getScore(string& query,int num){
 			tmpF = 0;
 			if(idf.find(tmp) != idf.end())
 				tmpF = idf[tmp];
-			// cout << tmpF <<" :-: "<< (ar[i]*(k+1)) <<" "<<(((1-b + (b*(docLen[i]/avgdl))) )) <<endl;
+			// if(v[i].second == "AP880906-0198")
+				// cerr << tmp << "  "<<v[i].second <<" "<<tmpF * ((ar[i]*(k+1))/( ar[i] + k*(1-b + (b*(docLen[i]/avgdl))) ))<<endl;
 			v[i].first += tmpF * ((ar[i]*(k+1))/( ar[i] + k*(1-b + (b*(docLen[i]/avgdl))) ));
 		}
 
     }
 	sort(v.rbegin(),v.rend());
-	for(int i=0;i<50;i++)
+	for(int i=0;i<50;i++){
 		cout <<num <<" 0 " <<v[i].second<<"  "<<i+1<<" "<<v[i].first << " o "<<endl;
+		if(v[i].second == "AP880906-0198")
+			break;
+	}
 	// cout <<endl<<"====================="<<endl<<endl;
     return ;
 }

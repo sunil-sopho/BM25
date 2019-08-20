@@ -75,16 +75,76 @@ int main(){
 	algo.setAvgdl();
 	algo.calcIdf();
 
-	FILENAME = "./data/queryL";
+	FILENAME = "./data/topics.51-100";
+	// FILENAME = "./data/queryL";
+
 	ifstream file(FILENAME);
 	vector<pair<float,string> > vec;
 	int num =51 ;
+
+	// mode 0 -> out, 1-> in top, 2-> top, 3-> des ,4-> sum, 5-> nar
+	int queryB = 0;
+	string topic,des,nar,cons;
 	if (file.is_open()) {
 		while (getline(file, line)) {
 			// cout << line <<endl;
-			 algo.getScore(line,num);
-			 num++;
+			if(line == "\n" || line == ""){
+				continue;
+			}
+			if(line == "<top>"){
+				queryB = 1;
+				nar = "";
+				des = "";
+				cons = "";
+				continue;
+			}
+			if(line == "</top>"){
+				// cout << num;
+				// if(num==66)
+				// cerr << nar << endl;
+				nar += cons;
+				algo.getScore(nar,num);
+				num++;
+			}
+			if(line.substr(0,4)=="<tit"){
+				topic = line.substr(15,line.size()-16);
+				continue;
+			}
+			if(line.substr(0,4) == "<des"){
+				queryB = 3;
+				continue;
+			}
+
+			if(line.substr(0,4) == "<smr"){
+				queryB = 4;
+				continue;
+			}
+
+			if(line.substr(0,4)=="<nar"){
+				queryB = 5;
+				continue;
+			}
+			if(line.substr(0,4)=="<con"){
+				queryB = 6;
+				continue;
+			}
+			if(line.substr(0,4)=="<fac"){
+				queryB = 7;
+				continue;
+			}
+			if(queryB == 3){
+				des += line+" ";
 			 // break;
+			}
+			if(queryB == 5){
+				nar += line+" ";
+			}
+			if( queryB == 6){
+				cons += line+" ";
+			}
+
+			// algo.getScore(line,num);
+			// num++;
 			// sort(vec.begin(),vec.end());
 			// for(int i=0;i<5;i++)
 				// cout << vec[i].second<<endl;
