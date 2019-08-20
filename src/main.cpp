@@ -2,6 +2,7 @@
 #include <experimental/filesystem>
 
 #include <bm.h>
+#include <omp.h>
 
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
@@ -12,18 +13,21 @@ int main(){
 
     bool txt = false;
     bool doc = false;
-    string text;
-    string docno;
+    
+    string docno,text,line,FILENAME;
 
     bm25 algo;
 
+    algo.setStop("./extra/stopwords_en.txt");
+
+    #pragma parallel omp for num_threads(3)
     for (const auto & entry : fs::directory_iterator(path)){
         // std::cout << entry.path() << std::endl;
         // read file here ::
-   		string FILENAME = entry.path();
+   		FILENAME = entry.path();
     	ifstream file(FILENAME);
 		if (file.is_open()) {
-		    string line;
+		    
 		    txt = false;
 		    doc = false;
 		    while (getline(file, line)) {
@@ -41,7 +45,7 @@ int main(){
 				}
 				else if(line == "</DOC>"){
 					doc = false;
-				    algo.addDoc(docno,text);
+				    algo.addDoc(docno,text,transCount-1);
 					continue;
 				}
 				if(line == "<TEXT>"){
@@ -55,14 +59,38 @@ int main(){
 				
 
 		    }
+			// int id = omp_get_thread_num();
+		 //    int data = transCount;
+		 //    int total = omp_get_num_threads();
+		 //    printf("Greetings from process %d out of %d with Data %d\n", id, total, data);
 		    // cout << transCount <<" : "<< algo.getCorpusSize() <<endl;
 		    file.close();
 		}
-		break;
+		// break;
     }
-    // assert(algo.getCorpusSize() ==transCount);
-    
-	cout << "totale Docs :: "<<transCount<<endl;
+    assert(algo.getCorpusSize() ==transCount);
+
+	// cout << "totale Docs :: "<<transCount<<endl;
+
+	algo.setAvgdl();
+	algo.calcIdf();
+
+	FILENAME = "./data/queryL";
+	ifstream file(FILENAME);
+	vector<pair<float,string> > vec;
+	int num =51 ;
+	if (file.is_open()) {
+		while (getline(file, line)) {
+			// cout << line <<endl;
+			 algo.getScore(line,num);
+			 num++;
+			 // break;
+			// sort(vec.begin(),vec.end());
+			// for(int i=0;i<5;i++)
+				// cout << vec[i].second<<endl;
+			// cout <<endl<<"====================="<<endl<<endl;
+		}
+	}
 
 	return 0;
 }

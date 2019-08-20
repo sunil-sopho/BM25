@@ -1,3 +1,7 @@
+stemming
+extra
+out*
+eval*
 *.o
 bm
 data

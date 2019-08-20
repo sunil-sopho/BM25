@@ -3,7 +3,7 @@
 IDIR =include 
 CXX=g++ 
 CC=gcc
-CXXFLAGS= -I$(IDIR) -I./lib  -std=c++17 -fpermissive -lstdc++fs -w -O3  -D_GLIBCXX_PARALLEL
+CXXFLAGS= -I$(IDIR) -I./lib  -std=c++17 -fpermissive -fopenmp -lstdc++fs -w -O3  #-D_GLIBCXX_PARALLEL
 
 SRCDIR=src
 TARGETDIR=bin
