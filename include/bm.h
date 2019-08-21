@@ -10,14 +10,15 @@ class bm25{
 		int corpusSize;
 		// string -> number of docs
 		// space reductions
-		unordered_map<string,int> vocab;
-		vector<string> vocabVector;
-		int vocabSize;
+		// unordered_map<string,int> vocab;
+		// vector<string> vocabVector;
+		// int vocabSize;
 		
 		unordered_map<string,int> wordDoc;
 		unordered_map<string,unordered_set<int> > wordDocNames;
 		float avgdl;
-		vector<shared_ptr<unordered_map<int,int>> > docFreq;
+		// vector<shared_ptr<unordered_map<string,int>> > docFreq;
+		vector<unordered_map<string,int> > docFreq;
 
 		unordered_map<string,float> idf;
 		vector<int> docLen;
@@ -29,7 +30,7 @@ class bm25{
 		float k,b,eps;
 		stemming::english_stem<> StemEnglish;
 		wstring word;
-		string stemmer(string tmp);
+		string stemmer(string& tmp);
 
 	public:
 

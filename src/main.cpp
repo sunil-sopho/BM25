@@ -78,9 +78,9 @@ int main(){
 	algo.printReport();
 	// cerr <<": "<< algo.vocabVector.size()<<" : "<<algo.vocabSize<<endl;
 	// cerr << algo.wordDoc.size() <<endl;
-	return;
+	// return;
 	FILENAME = "./data/topics.51-100";
-	// FILENAME = "./data/queryL";
+	// // FILENAME = "./data/queryL";
 
 	ifstream file(FILENAME);
 	vector<pair<float,string> > vec;

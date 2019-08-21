@@ -49,7 +49,7 @@ bm25::bm25(){
 	totaleDocLength = 0;
 	avgdl = 0;
 	corpusSize = 0;
-	vocabSize=0;
+	// vocabSize=0;
 	// hyper params 
 	k  = 1.5;
 	b = 0.75;
@@ -76,14 +76,14 @@ void bm25::addDoc(string& docNo,string& text,int cnt,bool clean=true){
 	docLen.pb(text.length());
 	docName.pb(docNo);
 	totaleDocLength += (long)text.length();
-	unordered_map<int,int> wordCount;
+	unordered_map<string,int> wordCount;
 
 	// code ref : https://www.tutorialspoint.com/The-most-elegant-way-to-iterate-the-words-of-a-C-Cplusplus-string
 	stringstream str_strm(text);
     string tmp;
     char delim = ' '; // Ddefine the delimiter to split by
 
-    int index=0;
+
 	while (std::getline(str_strm, tmp, delim)) {
 		if(stopWords.find(tmp) != stopWords.end()){
 			continue;
@@ -101,35 +101,37 @@ void bm25::addDoc(string& docNo,string& text,int cnt,bool clean=true){
 		// else if(tmp=="<location>")
 		// 	tmp = "location";
 		tmp = stemmer(tmp);
-		if(vocab.find(tmp) != vocab.end()){
-			index = vocab[tmp];
-		}else{
-			vocab[tmp] = vocabSize;
-			index = vocabSize;
-			vocabSize++;
-			// cerr << vocabSize<<"  "<<tmp <<endl;
-			vocabVector.push_back(tmp);
-		}
+		// if(vocab.find(tmp) != vocab.end()){
+		// 	index = vocab[tmp];
+		// }else{
+		// 	vocab[tmp] = vocabSize;
+		// 	index = vocabSize;
+		// 	vocabSize++;
+		// 	// cerr << vocabSize<<"  "<<tmp <<endl;
+		// 	vocabVector.push_back(tmp);
+		// }
 
-		if(wordCount.find(index) != wordCount.end() ){
-			wordCount[index] += 1;
+		if(wordCount.find(tmp) != wordCount.end() ){
+			wordCount[tmp] += 1;
 			continue;
 		}
-		wordCount[index] = 1;
+		wordCount[tmp] = 1;
     }
 
-    docFreq.pb((shared_ptr<unordered_map<int,int> >)&wordCount);
+    // docFreq.pb((shared_ptr<unordered_map<string,int> >)&wordCount);
+    docFreq.pb(wordCount);
+
 	// return;
 
 
     for(auto x: wordCount){
-    	tmp = vocabVector[x.first];
-    	wordDocNames[tmp].insert(cnt);
-    	if(wordDoc.find(tmp) != wordDoc.end() ){
-    		wordDoc[tmp] += 1;
+    	// tmp = vocabVector[x.first];
+    	wordDocNames[x.first].insert(cnt);
+    	if(wordDoc.find(x.first) != wordDoc.end() ){
+    		wordDoc[x.first] += 1;
     		continue;
     	}
-    	wordDoc[tmp] = 1;
+    	wordDoc[x.first] = 1;
     }
 
     // increment corpus Size 
@@ -138,9 +140,7 @@ void bm25::addDoc(string& docNo,string& text,int cnt,bool clean=true){
 }
 
 void bm25::printReport(){
-	cerr << "vocab size :: "<<vocab.size()<<" : "<<vocabVector.size()<<endl;
-	cerr <<" vocab -- "<<vocabSize<<endl;
-	cerr << wordDoc.size()<<endl;
+	cerr <<" vocab -- "<< wordDoc.size()<<endl;
 }
 void bm25::calcIdf(){
 	float idfSum = 0,idfCal;
@@ -183,7 +183,7 @@ void bm25::calcIdf3(){
 	}
 }
 
-string bm25::stemmer(string tmp){
+string bm25::stemmer(string& tmp){
 	// return tmp;
     wchar_t* UnicodeTextBuffer = new wchar_t[tmp.length()+1];
     std::wmemset(UnicodeTextBuffer, 0, tmp.length()+1);
@@ -217,7 +217,7 @@ void bm25::getScore(string& query,string& cons,int num){
 		for(auto y:wordDocNames[tmp]){
 			cnt = y;
 			// auto x = docFreq[cnt];
-			ar[cnt] = docFreq[cnt]->at(vocab[tmp]);
+			ar[cnt] = docFreq[cnt].at(tmp);
 
 		}
 		for(int i:wordDocNames[tmp]){
@@ -240,7 +240,7 @@ void bm25::getScore(string& query,string& cons,int num){
 		for(auto y:wordDocNames[tmp]){
 			cnt = y;
 			// auto x = docFreq[cnt];
-			ar[cnt] = docFreq[cnt]->at(vocab[tmp]);
+			ar[cnt] = docFreq[cnt].at(tmp);
 
 		}
 		for(int i:wordDocNames[tmp]){
