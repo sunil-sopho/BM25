@@ -2,7 +2,7 @@
 #include <experimental/filesystem>
 
 #include <bm.h>
-#include <omp.h>
+// #include <omp.h>
 
 using namespace std;
 namespace fs = std::experimental::filesystem::v1;
@@ -15,12 +15,12 @@ int main(){
     bool doc = false;
     
     string docno,text,line,FILENAME;
+    // return;
 
     bm25 algo;
 
     algo.setStop("./extra/stopwords_en.txt");
-
-    #pragma parallel omp for num_threads(3)
+    // #pragma parallel omp for num_threads(3)
     for (const auto & entry : fs::directory_iterator(path)){
         // std::cout << entry.path() << std::endl;
         // read file here ::
@@ -45,6 +45,7 @@ int main(){
 				}
 				else if(line == "</DOC>"){
 					doc = false;
+					// cerr << docno << endl;
 				    algo.addDoc(docno,text,transCount-1);
 					continue;
 				}
@@ -74,7 +75,10 @@ int main(){
 
 	algo.setAvgdl();
 	algo.calcIdf();
-
+	algo.printReport();
+	// cerr <<": "<< algo.vocabVector.size()<<" : "<<algo.vocabSize<<endl;
+	// cerr << algo.wordDoc.size() <<endl;
+	return;
 	FILENAME = "./data/topics.51-100";
 	// FILENAME = "./data/queryL";
 
@@ -102,8 +106,11 @@ int main(){
 				// cout << num;
 				// if(num==66)
 				// cerr << nar << endl;
-				nar += cons;
-				algo.getScore(nar,num);
+				// nar += cons;
+				// nar += cons;
+				// nar += cons;
+
+				algo.getScore(nar,cons,num);
 				num++;
 			}
 			if(line.substr(0,4)=="<tit"){

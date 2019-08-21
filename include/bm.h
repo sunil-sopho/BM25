@@ -9,10 +9,15 @@ class bm25{
 	private:
 		int corpusSize;
 		// string -> number of docs
+		// space reductions
+		unordered_map<string,int> vocab;
+		vector<string> vocabVector;
+		int vocabSize;
+		
 		unordered_map<string,int> wordDoc;
 		unordered_map<string,unordered_set<int> > wordDocNames;
 		float avgdl;
-		vector<unordered_map<string,int> > docFreq;
+		vector<shared_ptr<unordered_map<int,int>> > docFreq;
 
 		unordered_map<string,float> idf;
 		vector<int> docLen;
@@ -27,6 +32,8 @@ class bm25{
 		string stemmer(string tmp);
 
 	public:
+
+		void printReport();
 		bm25(vector<string> v);
 		bm25();
 		void setStop(string path);
@@ -42,7 +49,7 @@ class bm25{
 		int getCorpusSize();
 		void addDoc(string& docNo,string& text,int cnt,bool clean=true);
 
-		void getScore(string& query,int num);
+		void getScore(string& query,string& cons,int num);
 		void setAvgdl();
 
 
