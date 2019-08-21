@@ -76,7 +76,9 @@ void bm25::addDoc(string& docNo,string& text,int cnt,bool clean=true){
 	docLen.pb(text.length());
 	docName.pb(docNo);
 	totaleDocLength += (long)text.length();
-	unordered_map<string,int> wordCount;
+	// cerr << "last 1\n";
+
+	unordered_map<string,int> *wordCount = new unordered_map<string, int>();;
 
 	// code ref : https://www.tutorialspoint.com/The-most-elegant-way-to-iterate-the-words-of-a-C-Cplusplus-string
 	stringstream str_strm(text);
@@ -110,21 +112,24 @@ void bm25::addDoc(string& docNo,string& text,int cnt,bool clean=true){
 		// 	// cerr << vocabSize<<"  "<<tmp <<endl;
 		// 	vocabVector.push_back(tmp);
 		// }
+		// cerr << (wordCount->find(tmp) ==  wordCount->end() ) <<endl;
+		// cerr << "last 1 "<<tmp<< "\n";
 
-		if(wordCount.find(tmp) != wordCount.end() ){
-			wordCount[tmp] += 1;
+		if(wordCount->find(tmp) != wordCount->end() ){
+			wordCount->at(tmp) += 1;
 			continue;
 		}
-		wordCount[tmp] = 1;
+		wordCount->insert({tmp,1});
     }
 
-    // docFreq.pb((shared_ptr<unordered_map<string,int> >)&wordCount);
-    docFreq.pb(wordCount);
+    // cerr << "cnt : "<<cnt <<"  "<<wordCount->size()<<endl;
+    docFreq.pb((shared_ptr<unordered_map<string,int> >)wordCount);
+    // docFreq.pb(wordCount);
 
 	// return;
 
-
-    for(auto x: wordCount){
+	// cerr << "last\n";
+    for(auto x: *wordCount){
     	// tmp = vocabVector[x.first];
     	wordDocNames[x.first].insert(cnt);
     	if(wordDoc.find(x.first) != wordDoc.end() ){
@@ -207,20 +212,23 @@ void bm25::getScore(string& query,string& cons,int num){
 	stringstream str_strm(query);
     string tmp;
     float tmpF;
-    int cnt = 0;
+    // int cnt = 0;
     char delim = ' '; // Ddefine the delimiter to split by
 	while (std::getline(str_strm, tmp, delim)) {
 		if(stopWords.find(tmp) != stopWords.end())
 			continue;
 		tmp = stemmer(tmp);
-		cnt=0;
-		for(auto y:wordDocNames[tmp]){
-			cnt = y;
+		// cnt=0;
+		// cerr << "here tmp : "<<tmp<<endl;
+		for(auto i:wordDocNames[tmp]){
+			// cnt = y;
 			// auto x = docFreq[cnt];
-			ar[cnt] = docFreq[cnt].at(tmp);
+			// cerr <<"cnt : "<<cnt<<" "<<docFreq[cnt]->size()<<endl;
+			ar[i] = docFreq[i]->at(tmp);
+			// cerr<< "ar -- "<<ar[cnt]<<endl;
 
-		}
-		for(int i:wordDocNames[tmp]){
+		// }
+		// for(int i:wordDocNames[tmp]){
 			tmpF = 0;
 			if(idf.find(tmp) != idf.end())
 				tmpF = idf[tmp];
@@ -236,14 +244,14 @@ void bm25::getScore(string& query,string& cons,int num){
 		if(stopWords.find(tmp) != stopWords.end())
 			continue;
 		tmp = stemmer(tmp);
-		cnt=0;
-		for(auto y:wordDocNames[tmp]){
-			cnt = y;
+		// cnt=0;
+		for(auto i:wordDocNames[tmp]){
+			// cnt = y;
 			// auto x = docFreq[cnt];
-			ar[cnt] = docFreq[cnt].at(tmp);
+			ar[i] = docFreq[i]->at(tmp);
 
-		}
-		for(int i:wordDocNames[tmp]){
+		// }
+		// for(int i:wordDocNames[tmp]){
 			tmpF = 0;
 			if(idf.find(tmp) != idf.end())
 				tmpF = idf[tmp];

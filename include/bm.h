@@ -17,8 +17,8 @@ class bm25{
 		unordered_map<string,int> wordDoc;
 		unordered_map<string,unordered_set<int> > wordDocNames;
 		float avgdl;
-		// vector<shared_ptr<unordered_map<string,int>> > docFreq;
-		vector<unordered_map<string,int> > docFreq;
+		vector<shared_ptr<unordered_map<string,int>> > docFreq;
+		// vector<unordered_map<string,int> > docFreq;
 
 		unordered_map<string,float> idf;
 		vector<int> docLen;
