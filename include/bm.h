@@ -10,17 +10,18 @@ class bm25{
 		int corpusSize;
 		// string -> number of docs
 		// space reductions
-		// unordered_map<string,int> vocab;
-		// vector<string> vocabVector;
-		// int vocabSize;
+		unordered_map<string,int> vocab;
+		vector<string> vocabVector;
+		unordered_map<string,int> docIdMapper;
+		int vocabSize;
 		
-		unordered_map<string,int> wordDoc;
-		unordered_map<string,unordered_set<int> > wordDocNames;
+		unordered_map<int,int> wordDoc;
+		unordered_map<int,unordered_set<int> > wordDocNames;
 		float avgdl;
-		vector<shared_ptr<unordered_map<string,int>> > docFreq;
+		vector<shared_ptr<unordered_map<int,int>> > docFreq;
 		// vector<unordered_map<string,int> > docFreq;
 
-		unordered_map<string,float> idf;
+		unordered_map<int,float> idf;
 		vector<int> docLen;
 		vector<string> docName;
 		long totaleDocLength;
@@ -31,9 +32,12 @@ class bm25{
 		stemming::english_stem<> StemEnglish;
 		wstring word;
 		string stemmer(string& tmp);
-
+		unordered_map<string,string> st;
 	public:
 
+		void loadData(string path);
+		void saveData(string path);
+		void updateStemmer();
 		void printReport();
 		bm25(vector<string> v);
 		bm25();
@@ -50,10 +54,10 @@ class bm25{
 		int getCorpusSize();
 		void addDoc(string& docNo,string& text,int cnt,bool clean=true);
 
-		void getScore(string& query,string& cons,int num);
+		string getScore(string& query,string& cons,string& def,string& topic,int num);
 		void setAvgdl();
 
-
+		void updateScore(string& query,vector<pair<float,string> >& v,float reducer,float factor,int* ar,int* br);
 
 };
 

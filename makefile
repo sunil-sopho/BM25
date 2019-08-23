@@ -10,17 +10,17 @@ TARGETDIR=bin
 
 ODIR=build
 TARGET=bin/bm
+TARGET1=Indexer
+TARGET2=bm25_run
+
 LDIR=-L../lib
 
 LIBS=-lm 
 
 
 _DEPS=  bm.h
-	
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
-
 _OBJ = bm.o main.o
-
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
@@ -37,9 +37,17 @@ $(TARGET): $(OBJ)
 	@echo "\n\n\n Linking ...." 
 	g++ -o $@ $^ $(CXXFLAGS) $(LIBS) 
 
+$(TARGET1): $(OBJ)
+	@echo "\n\n\n Linking ...." 
+	g++ -o $@ $^ $(CXXFLAGS) $(LIBS) 
+
+$(TARGET2): $(OBJ)
+	@echo "\n\n\n Linking ...." 
+	g++ -o $@ $^ $(CXXFLAGS) $(LIBS) 
 
 .PHONY: clean
 
 clean:
 	@echo " Cleaning ....";
 	rm -rf $(ODIR) bin/fp
+	rm -rf Indexer bm25_run
